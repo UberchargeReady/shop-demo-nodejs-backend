@@ -24,11 +24,11 @@ app.use(function(err, req, res, next){
  });
 
 // connect to mongodb
-const MONGODB_URI = "mongodb+srv://dbAdmin:geo123@cluster0.xwh1u.mongodb.net/shopDemoDb?retryWrites=true&w=majority";
+const MONGODB_URI_DEV = "mongodb+srv://dbAdmin:geo123@cluster0.xwh1u.mongodb.net/shopDemoDb?retryWrites=true&w=majority";
 const PORT = 4000;
 
 //mongoose.connect('mongodb://localhost/shopDemoDb');
-mongoose.connect(MONGODB_URI).then(function() {
+mongoose.connect(process.env.MONGODB_URI || MONGODB_URI_DEV).then(function() {
     // listen for requests
     app.listen(process.env.port || PORT, function() {
         console.log("Listening on port " + PORT);
