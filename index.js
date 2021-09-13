@@ -2,14 +2,20 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-const MONGODB_URI = "mongodb+srv://dbAdmin:geo123@cluster0.xwh1u.mongodb.net/shopDemoDb?retryWrites=true&w=majority";
-const PORT = 4000;
-
 app.use(express.static('public'));
 app.use(express.json());
 
 // initialize routes
-app.use('/api', require('./routes/api'));
+const BASE_API_ENDPOINT = "/api";
+const ADMIN_ENDPOINT = "/admin";
+
+const shopRoutes = require('./routes/shop-routes');
+const authRoutes = require('./routes/auth-routes');
+const adminRoutes = require('./routes/admin-routes');
+
+app.use(BASE_API_ENDPOINT, shopRoutes);
+app.use(BASE_API_ENDPOINT, authRoutes);
+app.use(BASE_API_ENDPOINT + ADMIN_ENDPOINT, adminRoutes);
 
 // error handling
 app.use(function(err, req, res, next){
@@ -18,6 +24,9 @@ app.use(function(err, req, res, next){
  });
 
 // connect to mongodb
+const MONGODB_URI = "mongodb+srv://dbAdmin:geo123@cluster0.xwh1u.mongodb.net/shopDemoDb?retryWrites=true&w=majority";
+const PORT = 4000;
+
 //mongoose.connect('mongodb://localhost/shopDemoDb');
 mongoose.connect(MONGODB_URI).then(function() {
     // listen for requests
