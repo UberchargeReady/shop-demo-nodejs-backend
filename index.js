@@ -5,6 +5,10 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 
+app.get('/', function(req, res) {
+    res.json({ project: "Shop demo NodeJS", author: "George Ntaitzikis" });
+});
+
 // initialize routes
 const BASE_API_ENDPOINT = "/api";
 const ADMIN_ENDPOINT = "/admin";

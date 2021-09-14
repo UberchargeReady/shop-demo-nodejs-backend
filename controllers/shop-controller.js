@@ -1,8 +1,12 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+exports.getEntryPoint = function(req, res, next) {
+    res.json({ message: 'Api entry point' });
+};
+
 exports.getWelcome = function(req, res, next) {
-    res.json({ message: 'Welcome to shop demo api'});
+    res.json({ message: 'Welcome to shop demo api' });
 };
 
 exports.getProducts = function(req, res, next) {
