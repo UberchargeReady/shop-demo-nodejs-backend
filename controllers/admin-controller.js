@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const User = require('../models/user');
+const Order = require('../models/order');
 
 exports.getUser = function(req, res, next) {
     User.findById(req.params.userId).then(function(user) {
@@ -15,11 +16,22 @@ exports.getUsers = function(req, res, next) {
     }).catch(next);
 };
 
+exports.getOrder = function(req, res, next) {
+    Order.findById(req.params.orderId).then(function(order) {
+        if (!order) res.json("message", "Order doesn't exist");
+        res.send(order);
+    }).catch(next);
+};
+
 exports.getOrders = function(req, res, next) {
     Order.find({}).then(function(orders) {
         if (orders.length == 0) res.json({ message: "No orders in database" });
         res.send(orders);
     }).catch(next);
+};
+
+exports.getOrdersUser = function(req, res, next) {
+    //todo
 };
 
 exports.postAddProduct = function(req, res, next) {
