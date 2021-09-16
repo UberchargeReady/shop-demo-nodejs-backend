@@ -23,19 +23,19 @@ app.get('/', function(req, res) {
 });
 
 // user session
-//app.use(function(req, res, next) {
-//    req.user = null;
-//    req.isLoggedIn = false;
-//    const reqId = req.get('user_id');
-//    const reqToken = req.get('user_token');
-//    if (!reqId) return next();
-//    User.findById(reqId).then(function(user) {
-//        if (!user) return next();
-//        req.user = user;
-//        if (reqToken && reqToken === user.token) req.isLoggedIn = true;
-//        return next();
-//    }).catch(next);
-//});
+app.use(function(req, res, next) {
+    req.user = null;
+    req.isLoggedIn = false;
+    const reqId = req.get('user_id');
+    const reqToken = req.get('user_token');
+    if (!reqId) return next();
+    User.findById(reqId).then(function(user) {
+        if (!user) return next();
+        req.user = user;
+        if (reqToken && reqToken === user.token) req.isLoggedIn = true;
+        return next();
+    }).catch(next);
+});
 
 // initialize routes
 app.use(BASE_API_ENDPOINT, shopRoutes);
