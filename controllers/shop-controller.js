@@ -24,48 +24,63 @@ exports.getProduct = function(req, res, next) {
 };
 
 exports.getCart = function(req, res, next) {
-    req.user.populate('cart.items.productId').execPopulate().then(function(user) {
-        const products = user.cart.items;
+    if (req.isLoggedIn) {
+        const products = req.user.cart.items;
         res.send(products);
-    }).catch(next);
+    } else {
+        //todo
+        next();
+    }
 };
 
 exports.postCart = function(req, res, next) {
-    Product.findById(req.params.productId).then(function(product) {
-        const user = req.user;
-        user.addToCart(product);
-        res.send(user.cart.items);
-    }).catch(next);
+    if (req.isLoggedIn) {
+        Product.findById(req.params.productId).then(function(product) {
+            if (!product) res.json({ message: "Product doesn't exist" });
+            const user = req.user;
+            user.addToCart(product);
+            res.send(user.cart.items);
+        }).catch(next);
+    } else {
+        //todo
+        next();
+    }
 };
 
 exports.postCartRemoveItem = function(req, res, next) {
-    const user = req.user;
-    user.removeFromCart(req.body.productId).then(function() {
-        res.send(user.cart.items);
-    }).catch(next);
+    if (req.isLoggedIn) {
+        const user = req.user;
+        user.removeFromCart(req.body.productId).then(function() {
+            res.send(user.cart.items);
+        }).catch(next);
+    } else {
+        //todo
+        next();
+    }
 };
 
 exports.postCartEmpty = function(req, res, next) {
-    //todo
+    if (req.isLoggedIn) {
+        //todo
+    } else {
+        //todo
+        next();
+    }
 };
 
 exports.getCheckout = function(req, res, next) {
     if (req.isLoggedIn) {
-        let order;
-        req.user.populate('cart.items.productId').execPopulate().then(function(user) {
-            const products = user.cart.items.map(function(p) {
-                return { quantity: p.quantity, product: { ...p.productId._doc } };
-            });
-            order = new Order({user: { userId: req.user}, products });
-            return order.save();
-        }).then(function() {
-            return req.user.clearCart();
-        }).then(function() {
+        const user = req.user;
+        const cart = user.cart.items;
+        if (cart.length > 0) {
+            const order = new Order({ user: user, products: cart });
+            order.save();
+            user.clearCart();
             res.send(order);
-        }).catch(next);
+        } else res.json({ message: "Cart is empty" });
     } else {
         //todo
-        next()
+        next();
     }
 };
 
