@@ -24,6 +24,8 @@ app.get('/', function(req, res) {
 
 // user session
 app.use(function(req, res, next) {
+    req.user = null;
+    req.isLoggedIn = false;
     const reqId = req.get('user_id');
     const reqToken = req.get('user_token');
     if (!reqId) return next();

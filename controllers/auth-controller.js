@@ -11,9 +11,8 @@ exports.postLogin = function(req, res, next) {
         if (!user) res.json({ message: "User doesn't exist" });
         user.comparePassword(req.body.password, function(err, isMatch) {
             if (isMatch) {
-                req.session.isLoggedIn = true;
-                req.session.user = user;
-                req.session.save();
+                req.isLoggedIn = true;
+                req.user = user;
                 user.generateToken();
                 res.send(user);
             } else res.json({ message: 'Incorrect password' });
@@ -33,5 +32,6 @@ exports.getLogout = function(req, res, next) {
 };
 
 exports.getAccount = function(req, res, next) {
-    res.send(req.session.user);
+    //todo
+    res.send(req.user);
 };

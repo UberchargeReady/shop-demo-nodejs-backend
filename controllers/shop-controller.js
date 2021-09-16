@@ -50,24 +50,34 @@ exports.postCartEmpty = function(req, res, next) {
 };
 
 exports.getCheckout = function(req, res, next) {
-    let order;
-    req.user.populate('cart.items.productId').execPopulate().then(function(user) {
-        const products = user.cart.items.map(function(p) {
-            return { quantity: p.quantity, product: { ...p.productId._doc } };
-        });
-        order = new Order({user: { userId: req.user}, products });
-        return order.save();
-    }).then(function() {
-        return req.user.clearCart();
-    }).then(function() {
-        res.send(order);
-    }).catch(next);
+    if (req.isLoggedIn) {
+        let order;
+        req.user.populate('cart.items.productId').execPopulate().then(function(user) {
+            const products = user.cart.items.map(function(p) {
+                return { quantity: p.quantity, product: { ...p.productId._doc } };
+            });
+            order = new Order({user: { userId: req.user}, products });
+            return order.save();
+        }).then(function() {
+            return req.user.clearCart();
+        }).then(function() {
+            res.send(order);
+        }).catch(next);
+    } else {
+        //todo
+        next()
+    }
 };
 
 exports.getOrders = function(req, res, next) {
-    Order.find({ 'user.userId': req.user._id }).then(function(orders) {
-        res.send(orders);
-    }).catch(next);
+    if (req.isLoggedIn) {
+        Order.find({ 'user_id': req.user._id }).then(function(orders) {
+            res.send(orders);
+        }).catch(next);
+    } else {
+        //todo
+        next();
+    }
 };
 
 

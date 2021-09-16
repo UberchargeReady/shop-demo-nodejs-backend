@@ -67,7 +67,7 @@ exports.deleteProduct = function(req, res, next) {
                 user.removeFromCart(prodId);
             });
         });
-        return Product.deleteOne({ _id: productId, userId: req.session.user._id })
+        return Product.deleteOne({ _id: productId, userId: req.user._id })
     }).then(function() {
         res.status(200).json("message", "Product deleted");
     }).catch(function(err) {
