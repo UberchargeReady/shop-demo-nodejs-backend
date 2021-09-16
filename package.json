@@ -11,10 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "connect-mongodb-session": "^3.1.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
-    "express-session": "^1.17.2",
     "mongoose": "^6.0.5",
     "mongoose-double": "0.0.1"
   },

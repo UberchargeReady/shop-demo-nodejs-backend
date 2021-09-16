@@ -22,17 +22,14 @@ exports.postLogin = function(req, res, next) {
 };
 
 exports.getLogout = function(req, res, next) {
-    //User.findOne({ username: req.body.username}).then(function(user) {
-    //    if (!user) res.json({ message: "User doesn't exist" });
-    //    user.clearToken();
-    //    res.send(user);
-    //}).catch(next);
-
-    const user = req.session.user;
-    user.clearToken();
-    req.session.destroy().then(function() {
-        req.send(user);
-    }).catch(next);
+    if (req.isLoggedIn) {
+        const user = req.user;
+        user.clearToken();
+        res.send(user);
+    } else {
+        //todo not logged in error
+        return next();
+    }
 };
 
 exports.getAccount = function(req, res, next) {

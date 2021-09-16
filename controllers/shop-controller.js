@@ -24,7 +24,7 @@ exports.getProduct = function(req, res, next) {
 };
 
 exports.getCart = function(req, res, next) {
-    req.session.user.populate('cart.items.productId').execPopulate().then(function(user) {
+    req.user.populate('cart.items.productId').execPopulate().then(function(user) {
         const products = user.cart.items;
         res.send(products);
     }).catch(next);
@@ -32,14 +32,14 @@ exports.getCart = function(req, res, next) {
 
 exports.postCart = function(req, res, next) {
     Product.findById(req.params.productId).then(function(product) {
-        const user = req.session.user;
+        const user = req.user;
         user.addToCart(product);
         res.send(user.cart.items);
     }).catch(next);
 };
 
 exports.postCartRemoveItem = function(req, res, next) {
-    const user = req.session.user;
+    const user = req.user;
     user.removeFromCart(req.body.productId).then(function() {
         res.send(user.cart.items);
     }).catch(next);
@@ -51,21 +51,21 @@ exports.postCartEmpty = function(req, res, next) {
 
 exports.getCheckout = function(req, res, next) {
     let order;
-    req.session.user.populate('cart.items.productId').execPopulate().then(function(user) {
+    req.user.populate('cart.items.productId').execPopulate().then(function(user) {
         const products = user.cart.items.map(function(p) {
             return { quantity: p.quantity, product: { ...p.productId._doc } };
         });
-        order = new Order({user: { userId: req.session.user}, products });
+        order = new Order({user: { userId: req.user}, products });
         return order.save();
     }).then(function() {
-        return req.session.user.clearCart();
+        return req.user.clearCart();
     }).then(function() {
         res.send(order);
     }).catch(next);
 };
 
 exports.getOrders = function(req, res, next) {
-    Order.find({ 'user.userId': req.session.user._id }).then(function(orders) {
+    Order.find({ 'user.userId': req.user._id }).then(function(orders) {
         res.send(orders);
     }).catch(next);
 };
