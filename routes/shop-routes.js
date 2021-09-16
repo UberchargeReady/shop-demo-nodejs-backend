@@ -15,7 +15,9 @@ router.get('/cart', shopController.getCart);
 
 router.post('/cart/:productId', shopController.postCart);
 
-router.post('/cart-remove-item', shopController.postCartRemoveItem);
+router.post('/cart/remove', shopController.postCartRemoveItem);
+
+router.post('/cart/empty', shopController.postCartEmpty);
 
 router.get('/checkout', shopController.getCheckout);
 

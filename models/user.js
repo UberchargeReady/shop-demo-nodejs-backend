@@ -7,7 +7,7 @@ const SALT_WORK_FACTOR = 10;
 const UserSchema = new Schema({
     username: { type: String, required: true, index: { unique: true } },
     password: { type: String, required: true },
-    token: String,
+    token: { type: String, default: "" },
     cart: {
         items: [{ productId: {type: mongoose.SchemaTypes.ObjectId, required: true, ref: 'Product'},
                 quantity: { type: Number, required: true}}]
@@ -49,7 +49,7 @@ UserSchema.methods.generateToken = function() {
 
 UserSchema.methods.clearToken = function() {
     const user = this;
-    user.token = null;
+    user.token = "";
     user.save();
 }
 
