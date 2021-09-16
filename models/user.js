@@ -54,9 +54,7 @@ UserSchema.methods.clearToken = function() {
 }
 
 UserSchema.methods.addToCart = function(product) {
-    // findIndex() returns matching index, or -1 if no matching index
-    const cartProductIndex = this.cart.items.findIndex((cartProduct) => {
-        // _id retrieved from database can be used as a string in JS, but technically isn't of type string
+    const cartProductIndex = this.cart.items.findIndex(function(cartProduct) {
         return cartProduct.productId.toString() === product._id.toString();});
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
@@ -65,24 +63,29 @@ UserSchema.methods.addToCart = function(product) {
         newQuantity = this.cart.items[cartProductIndex].quantity + 1;
         updatedCartItems[cartProductIndex].quantity = newQuantity;
     } else {
-        updatedCartItems.push({
-        // Mongoose automatically wraps in ObjectId
-        productId: product._id,
-        quantity: newQuantity,
-        });
+        updatedCartItems.push({ productId: product._id, quantity: newQuantity });
     }
-    const updatedCart = {
-        items: updatedCartItems,
-    };
+    const updatedCart = { items: updatedCartItems };
     this.cart = updatedCart;
     return this.save();
 }
 
+UserSchema.methods.modifyQuantity = function(product, newQuantity) {
+    const cartProductIndex = this.cart.items.findIndex(function(cartProduct) {
+        return cartProduct.productId.toString() === product._id.toString();
+    });
+    if (cartProductIndex >= 0) {
+        const updatedCartItems = [...this.cart.items];
+        updatedCartItems[cartProductIndex].quantity = newQuantity;
+        const updatedCart = { items: updatedCartItems };
+        this.cart = updatedCart;
+        return this.save();
+    }
+}
+
 UserSchema.methods.removeFromCart = function (productId) {
-    // filter() JS method creates new array with all elements that pass test implemented by provided function (like find(), but returns array with all matching items rather than first one)
-    const updatedCartItems = this.cart.items.filter((i) => {
-        // Return true (keep) for all items except one being deleted
-        return i.productId.toString() !== productId.toString();
+    const updatedCartItems = this.cart.items.filter((cartProduct) => {
+        return cartProduct.productId.toString() !== productId.toString();
     });
     this.cart.items = updatedCartItems;
     return this.save();

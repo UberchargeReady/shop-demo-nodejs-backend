@@ -38,7 +38,10 @@ exports.postCart = function(req, res, next) {
         Product.findById(req.params.productId).then(function(product) {
             if (!product) res.json({ message: "Product doesn't exist" });
             const user = req.user;
-            user.addToCart(product);
+            if (req.body.quantity) {
+                user.modifyQuantity(product, req.body.quantity);
+            }
+            else user.addToCart(product);
             res.send(user.cart.items);
         }).catch(next);
     } else {
@@ -50,7 +53,7 @@ exports.postCart = function(req, res, next) {
 exports.postCartRemoveItem = function(req, res, next) {
     if (req.isLoggedIn) {
         const user = req.user;
-        user.removeFromCart(req.body.productId).then(function() {
+        user.removeFromCart(req.params.productId).then(function() {
             res.send(user.cart.items);
         }).catch(next);
     } else {
