@@ -74,8 +74,8 @@ UserSchema.methods.modifyQuantity = function(product, newQuantity) {
     const index = this.cart.items.findIndex(function(cartProduct) {
         return cartProduct.productId.toString() === product._id.toString();
     });
+    const updatedCartItems = [...this.cart.items];
     if (index >= 0) {
-        const updatedCartItems = [...this.cart.items];
         updatedCartItems[index].quantity = newQuantity;
     } else {
         updatedCartItems.push({ productId: product._id, quantity: newQuantity });

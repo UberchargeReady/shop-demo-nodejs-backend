@@ -42,7 +42,9 @@ exports.postCart = function(req, res, next) {
             if (req.body.quantity) {
                 user.modifyQuantity(product, req.body.quantity);
             }
-            else user.addToCart(product);
+            else {
+                user.addToCart(product);
+            }
             res.send(user.cart.items);
         }).catch(next);
     } else {
