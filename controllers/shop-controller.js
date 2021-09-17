@@ -96,7 +96,7 @@ exports.getCheckout = function(req, res, next) {
 
 exports.getOrders = function(req, res, next) {
     if (req.isLoggedIn) {
-        Order.find({ 'user_id': req.user._id }).then(function(orders) {
+        Order.find({ 'user': req.user._id }).then(function(orders) {
             res.send(orders);
         }).catch(next);
     } else {
