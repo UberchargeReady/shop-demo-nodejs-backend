@@ -23,10 +23,12 @@ exports.getProduct = function(req, res, next) {
     }).catch(next);
 };
 
+// todo populate
 exports.getCart = function(req, res, next) {
     if (req.isLoggedIn) {
-        const products = req.user.cart.items;
-        res.send(products);
+        req.user.populate('cart.items.productId').then(function(user) {
+            res.send(user);
+        })
     } else {
         //todo
         next();
@@ -64,22 +66,27 @@ exports.postCartRemoveItem = function(req, res, next) {
 
 exports.postCartEmpty = function(req, res, next) {
     if (req.isLoggedIn) {
-        //todo
+        req.user.clearCart();
+        res.send(req.user.cart.items);
     } else {
         //todo
         next();
     }
 };
 
+// todo populate
 exports.getCheckout = function(req, res, next) {
     if (req.isLoggedIn) {
-        const user = req.user;
-        const cart = user.cart.items;
-        if (cart.length > 0) {
-            const order = new Order({ user: user, products: cart });
-            order.save();
-            user.clearCart();
-            res.send(order);
+        if (req.user.cart.items.length > 0) {
+            req.user.populate('cart.items.productId').then(function(user) {
+                const products = user.cart.items.map((product) => {
+                    return { quantity: product.quantity, product: {...product.productId._doc} };
+                });
+                const order = new Order({ user: user, products: products });
+                order.save();
+                user.clearCart();
+                res.send(order);
+            })
         } else res.json({ message: "Cart is empty" });
     } else {
         //todo

@@ -19,6 +19,7 @@ exports.getUsers = function(req, res, next) {
 exports.getOrder = function(req, res, next) {
     Order.findById(req.params.orderId).then(function(order) {
         if (!order) res.json("message", "Order doesn't exist");
+        //console.log(order.populate('user').exec());
         res.send(order);
     }).catch(next);
 };

@@ -9,8 +9,8 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
     token: { type: String, default: "" },
     cart: {
-        items: [{ productId: {type: mongoose.SchemaTypes.ObjectId, required: true, ref: 'Product'},
-                quantity: { type: Number, required: true}}]
+        items: [{ productId: { type: Schema.Types.ObjectId, required: true, ref: 'Product' },
+                quantity: { type: Number, required: true } }]
     }
 });
      
@@ -54,14 +54,14 @@ UserSchema.methods.clearToken = function() {
 }
 
 UserSchema.methods.addToCart = function(product) {
-    const cartProductIndex = this.cart.items.findIndex(function(cartProduct) {
+    const index = this.cart.items.findIndex(function(cartProduct) {
         return cartProduct.productId.toString() === product._id.toString();});
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
 
-    if (cartProductIndex >= 0) {
-        newQuantity = this.cart.items[cartProductIndex].quantity + 1;
-        updatedCartItems[cartProductIndex].quantity = newQuantity;
+    if (index >= 0) {
+        newQuantity = this.cart.items[index].quantity + 1;
+        updatedCartItems[index].quantity = newQuantity;
     } else {
         updatedCartItems.push({ productId: product._id, quantity: newQuantity });
     }
@@ -71,12 +71,12 @@ UserSchema.methods.addToCart = function(product) {
 }
 
 UserSchema.methods.modifyQuantity = function(product, newQuantity) {
-    const cartProductIndex = this.cart.items.findIndex(function(cartProduct) {
+    const index = this.cart.items.findIndex(function(cartProduct) {
         return cartProduct.productId.toString() === product._id.toString();
     });
-    if (cartProductIndex >= 0) {
+    if (index >= 0) {
         const updatedCartItems = [...this.cart.items];
-        updatedCartItems[cartProductIndex].quantity = newQuantity;
+        updatedCartItems[index].quantity = newQuantity;
         const updatedCart = { items: updatedCartItems };
         this.cart = updatedCart;
         return this.save();
