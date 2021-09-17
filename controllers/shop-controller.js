@@ -23,7 +23,6 @@ exports.getProduct = function(req, res, next) {
     }).catch(next);
 };
 
-// todo populate
 exports.getCart = function(req, res, next) {
     if (req.isLoggedIn) {
         req.user.populate('cart.items.productId').then(function(user) {
@@ -74,7 +73,6 @@ exports.postCartEmpty = function(req, res, next) {
     }
 };
 
-// todo populate
 exports.getCheckout = function(req, res, next) {
     if (req.isLoggedIn) {
         if (req.user.cart.items.length > 0) {

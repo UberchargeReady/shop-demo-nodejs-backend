@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-//mongoose.set('debug', true);
+mongoose.set('debug', true);
 
 const User = require('./models/user');
 

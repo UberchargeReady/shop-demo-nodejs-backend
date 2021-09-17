@@ -77,10 +77,12 @@ UserSchema.methods.modifyQuantity = function(product, newQuantity) {
     if (index >= 0) {
         const updatedCartItems = [...this.cart.items];
         updatedCartItems[index].quantity = newQuantity;
-        const updatedCart = { items: updatedCartItems };
-        this.cart = updatedCart;
-        return this.save();
+    } else {
+        updatedCartItems.push({ productId: product._id, quantity: newQuantity });
     }
+    const updatedCart = { items: updatedCartItems };
+    this.cart = updatedCart;
+    return this.save();
 }
 
 UserSchema.methods.removeFromCart = function (productId) {
